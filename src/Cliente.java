@@ -7,7 +7,8 @@ public class Cliente {
 
     int id;
     int ticket;
-    long tiempo;
+    int tiempo;
+    double gasto;
 
 
     //::::::::::::::::::::::::::::::::::::::::::::CONTRUCTORES
@@ -21,6 +22,7 @@ public class Cliente {
     public Cliente(int id) {
         this.id =  id;
         tiempo = tiempoRandom();
+        gasto = gastoRandom();
     }
 
     //::::::::::::::::::::::::::::::::::::::::GETTER Y SETTERS
@@ -40,19 +42,27 @@ public class Cliente {
         this.ticket = ticket;
     }
 
-    public long getTiempo() {
+    public int getTiempo() {
         return tiempo;
     }
 
-    public void setTiempo(long tiempo) {
+    public void setTiempo(int tiempo) {
         this.tiempo = tiempo;
     }
 
-    //::::::::::::::::::::::::::::::::::::::::METODOS GENERALES
+    public double getGasto() {
+        return gasto;
+    }
 
-    public long tiempoRandom (){
-        Random rnd = new Random(100000);
-        return rnd.nextLong()+20000;
+    //::::::::::::::::::::::::::::::::::::::::METODOS GENERALES
+    public int tiempoRandom (){
+        Random rnd = new Random();
+        return rnd.nextInt(100000)+2000;
+    }
+
+    public int gastoRandom (){
+        Random rnd = new Random();
+        return rnd.nextInt(100)+1;
     }
 
 
