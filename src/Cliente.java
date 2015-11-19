@@ -3,67 +3,64 @@ import java.util.Random;
 /**
  * Created by 47767573t on 11/11/15.
  */
-public class Cliente {
+public class Cliente extends Thread {
 
     int id;
-    int ticket;
-    int tiempo;
+    int tiempoCompra;
+    int tiempoPago;
     double gasto;
+    Caja caja = null;
 
 
     //::::::::::::::::::::::::::::::::::::::::::::CONTRUCTORES
 
-    public Cliente(int id, int ticket) {
+    public Cliente(int id, Caja caja) {
         this.id =  id;
-        this.ticket = ticket;
-        tiempo = tiempoRandom();
+        this.caja = caja;
     }
 
-    public Cliente(int id) {
-        this.id =  id;
-        tiempo = tiempoRandom();
-        gasto = gastoRandom();
-    }
 
     //::::::::::::::::::::::::::::::::::::::::GETTER Y SETTERS
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(int ticket) {
-        this.ticket = ticket;
-    }
-
-    public int getTiempo() {
-        return tiempo;
-    }
-
-    public void setTiempo(int tiempo) {
-        this.tiempo = tiempo;
-    }
-
-    public double getGasto() {
-        return gasto;
-    }
-
-    //::::::::::::::::::::::::::::::::::::::::METODOS GENERALES
-    public int tiempoRandom (){
+    public void setTiempo() {
         Random rnd = new Random();
-        return rnd.nextInt(100000)+2000;
+        tiempoCompra = rnd.nextInt(20000);
+        tiempoPago = rnd.nextInt(20000);
     }
 
-    public int gastoRandom (){
+    public void setGasto(int tiempo) {
         Random rnd = new Random();
-        return rnd.nextInt(100)+1;
+        gasto = (rnd.nextInt(100)+1)*(tiempo/1000);
     }
 
 
+    //::::::::::::::::::::::::::::::::::::::::EJECUCION
+
+    public void run(){
+        setTiempo();                    //Determinamos aleatoriamente el tiempo de compra y de pago
+        try {
+            sleep(tiempoCompra);        //espera el tiempo de compra
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        int cajaElegida = caja.randomCajaSeleccion();
+
+        try {
+            setGasto(tiempoCompra);     //Calculamos el gasto aleatorio pero teniendo en cuenta el tiempo de comprar proporcionalmente
+            caja.Ocupar(cajaElegida);
+            sleep(tiempoPago);          //espera el tiempo pagando la compra
+            caja.Vaciar(cajaElegida, this.gasto);
+            caja.contadorTiempo(this.tiempoPago);
+            System.out.println();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Cliente(" + this.id + ") de la caja(" + cajaElegida
+                + ") ha tardado " + (this.tiempoPago / 1000)
+                + "s en pagar " + this.gasto + "euros y "
+                + (this.tiempoCompra / 1000) + "s comprando");
+        System.out.println("Tiempo medio total incremental de compra: "+(caja.getTiempoMedio()/1000));
+
+    }
 }
